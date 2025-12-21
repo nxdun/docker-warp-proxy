@@ -30,7 +30,7 @@ services:
       - 40000:40000
     restart: unless-stopped
     environment:
-      # use your own wrap+ key or onetrust key.
+      # use your own wrap+ key or zero trust key.
       - LICENSE=''
     logging:
       driver: json-file
