@@ -33,7 +33,7 @@ services:
       - 40000:40000
     restart: unless-stopped
     environment:
-    # use your own wrap+ key
+      # use your own wrap+ key
       - LICENSE=''
     logging:
       driver: json-file
