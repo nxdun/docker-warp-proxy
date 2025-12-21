@@ -7,8 +7,14 @@ Docker image to run Cloudflare Warp in proxy mode. Image is rebuilt and updated 
 
 ## Usage
 
+### docker hub image
 ```
 docker run -d -p 40000:40000 --restart unless-stopped seiry/cloudflare-warp-proxy
+```
+
+### or github package image
+```
+docker run -d -p 40000:40000 --restart unless-stopped ghcr.io/seiry/cloudflare-warp-proxy
 ```
 
 SOCKS5 proxy server will be listening at port 40000.
@@ -21,12 +27,13 @@ version: "3.0"
 services:
   cloudflare-warp-proxy:
     image: seiry/cloudflare-warp-proxy
+    # image: ghcr.io/seiry/cloudflare-warp-proxy
     network_mode: bridge
     ports:
       - 40000:40000
     restart: unless-stopped
     environment:
-    # use your own wrap+ key
+      # use your own wrap+ key
       - LICENSE=''
     logging:
       driver: json-file
