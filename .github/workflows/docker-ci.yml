@@ -1,11 +1,8 @@
 name: docker-ci
 
 on:
-  push:
-    branches:
-      - 'main'
-  schedule:
-    - cron: '3 8 * * *'
+  release:
+    types: [published]
 
 jobs:
   docker:
@@ -27,6 +24,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
+        name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/cloudflare-warp-proxy
+          tags: |
+            type=semver,pattern={{version}}
+            type=raw,value=latest
+      -
         name: Build and push
         id: docker_build
         uses: docker/build-push-action@v6
@@ -34,4 +40,5 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cloudflare-warp-proxy:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
