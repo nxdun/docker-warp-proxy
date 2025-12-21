@@ -2,6 +2,9 @@
 
 Docker image to run Cloudflare Warp in proxy mode. Image is rebuilt and updated every day.
 
+[![docker-ci](https://github.com/seiry/docker-warp-proxy/actions/workflows/docker-ci.yml/badge.svg?branch=main)](https://github.com/seiry/docker-warp-proxy/actions/workflows/docker-ci.yml)
+
+
 ## Usage
 
 ```
