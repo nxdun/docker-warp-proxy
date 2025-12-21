@@ -15,7 +15,7 @@ RUN	curl https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --out
 	apt update && \
 	apt install cloudflare-warp -y --no-install-recommends
 
-	RUN	apt remove -y curl gnupg && \
+RUN	apt remove -y curl && \
 	apt clean -y && \
 	rm -rf /var/lib/apt/lists/* && \
 	chmod +x /entrypoint.sh
