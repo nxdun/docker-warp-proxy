@@ -1,12 +1,10 @@
 ARG DEBIAN_RELEASE=bullseye
 ARG LICENSE=''
-ARG PROTOCOL='WireGuard'
 FROM docker.io/debian:$DEBIAN_RELEASE-slim
 ARG DEBIAN_RELEASE
 COPY entrypoint.sh /
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LICENSE=${LICENSE}
-ENV PROTOCOL=${PROTOCOL}
 
 RUN true && \
 	apt update && \

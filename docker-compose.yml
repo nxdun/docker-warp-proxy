@@ -7,9 +7,7 @@ services:
       - 40000:40000
     restart: unless-stopped
     environment:
-      # - LICENSE=you-own-key
-      - PROTOCOL=WireGuard
-      # - PROTOCOL=MASQUE # MASQUE or WireGuard for tunnel protocol
+      - LICENSE='' # use your own key, for example onetrust or warp+
     logging:
       driver: json-file
       options:

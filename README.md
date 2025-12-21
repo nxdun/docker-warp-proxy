@@ -31,10 +31,8 @@ services:
       - 40000:40000
     restart: unless-stopped
     environment:
-      # use your own wrap+ key
+      # use your own wrap+ key or onetrust key.
       - LICENSE=''
-      - PROTOCOL=WireGuard
-      # - PROTOCOL=MASQUE # MASQUE or WireGuard for tunnel protocol
     logging:
       driver: json-file
       options:
@@ -65,3 +63,9 @@ warp=on
 gateway=off
 ...
 ```
+
+
+## notes
+
+* new version of cloudflare warp (rust version), now only allow using `MASQUE` protocol in proxy mode. With this error message if you try to use `WireGuard` 
+  > `Connection error error=InvalidKey("Proxy mode only supports MASQUE")`
