@@ -1,5 +1,9 @@
 name: docker-ci
 
+permissions:
+  contents: read
+  packages: write
+
 on:
   release:
     types: [published]
@@ -24,11 +28,20 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
+        name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
         name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/cloudflare-warp-proxy
+          images: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/cloudflare-warp-proxy
+            ghcr.io/${{ github.repository_owner }}/cloudflare-warp-proxy
           tags: |
             type=semver,pattern={{version}}
             type=raw,value=latest
