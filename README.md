@@ -1,19 +1,16 @@
 # docker-warp-proxy
 
-Docker image to run Cloudflare Warp in proxy mode. Image is rebuilt and updated every day.
+Docker image to run Cloudflare Warp in proxy mode.
 
-[![docker-ci](https://github.com/seiry/docker-warp-proxy/actions/workflows/docker-ci.yml/badge.svg)](https://github.com/seiry/docker-warp-proxy/actions/workflows/docker-ci.yml)
+- Multi step build to reduce image size. approx 120MB.
+- uses busybox as base image.
+- Recreate Trigger
 
 ## Usage
 
 ### docker hub image
 ```
-docker run -d -p 40000:40000 --restart unless-stopped seiry/cloudflare-warp-proxy
-```
-
-### or github package image
-```
-docker run -d -p 40000:40000 --restart unless-stopped ghcr.io/seiry/cloudflare-warp-proxy
+docker run -d -p 40000:40000 --restart unless-stopped nxdun/cloudflare-warp-proxy
 ```
 
 SOCKS5 proxy server will be listening at port 40000.
@@ -23,14 +20,12 @@ SOCKS5 proxy server will be listening at port 40000.
 ```yml
 services:
   cloudflare-warp-proxy:
-    image: seiry/cloudflare-warp-proxy
-    # image: ghcr.io/seiry/cloudflare-warp-proxy
+    image: nxdun/cloudflare-warp-proxy
     network_mode: bridge
     ports:
       - 40000:40000
     restart: unless-stopped
     environment:
-      # use your own wrap+ key or zero trust key.
       - LICENSE=''
     logging:
       driver: json-file
@@ -62,9 +57,3 @@ warp=on
 gateway=off
 ...
 ```
-
-
-## notes
-
-* new version of cloudflare warp (rust version), now only allow using `MASQUE` protocol in proxy mode. With this error message if you try to use `WireGuard` 
-  > `Connection error error=InvalidKey("Proxy mode only supports MASQUE")`
