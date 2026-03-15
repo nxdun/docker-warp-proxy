@@ -1,4 +1,4 @@
-name: docker build CI
+name: test docker build CI
 
 permissions:
   contents: read
@@ -10,7 +10,7 @@ on:
   push:
     branches:
       - main
-      - nadun/fail-fast-option
+      - nadun/*
 
 jobs:
   run-docker-build:

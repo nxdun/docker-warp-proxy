@@ -1,10 +1,9 @@
 ARG DEBIAN_RELEASE=bullseye
 ARG LICENSE=
-FROM docker.io/debian:$DEBIAN_RELEASE-slim
+
+FROM docker.io/debian:$DEBIAN_RELEASE-slim AS builder
 ARG DEBIAN_RELEASE
-COPY entrypoint.sh /
 ENV DEBIAN_FRONTEND=noninteractive
-ENV LICENSE=${LICENSE}
 
 RUN true && \
 	apt update && \
@@ -16,10 +15,22 @@ RUN	curl https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --out
 	apt update && \
 	apt install cloudflare-warp -y --no-install-recommends
 
-RUN	apt remove -y curl && \
-	apt clean -y && \
-	rm -rf /var/lib/apt/lists/* && \
-	chmod +x /entrypoint.sh
+RUN	set -euo pipefail && \
+	mkdir -p /out && \
+	for bin in /usr/bin/warp-cli /usr/bin/warp-svc /usr/bin/socat; do \
+		cp -v --parents "$bin" /out/; \
+		ldd "$bin" | awk '/=>/ {print $3} /^[[:space:]]*\// {print $1}' | grep -E '^/' | xargs -r -I{} cp -v --parents "{}" /out/; \
+	done && \
+	mkdir -p /out/etc/ssl/certs && \
+	cp -v /etc/ssl/certs/ca-certificates.crt /out/etc/ssl/certs/
+
+FROM docker.io/debian:$DEBIAN_RELEASE-slim
+ARG LICENSE
+ENV LICENSE=${LICENSE}
+
+COPY entrypoint.sh /
+COPY --from=builder /out/ /
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 40000/tcp
 ENTRYPOINT [ "/entrypoint.sh" ]
