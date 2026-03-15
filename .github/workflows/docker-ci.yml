@@ -1,4 +1,4 @@
-name: docker build CI
+name: CI - docker build
 
 permissions:
   contents: read
@@ -7,10 +7,6 @@ permissions:
 on:
   release:
     types: [published]
-  push:
-    branches:
-      - main
-      - nadun/fail-fast-option
 
 jobs:
   run-docker-build:
