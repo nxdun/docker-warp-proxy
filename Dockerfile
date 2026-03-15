@@ -18,9 +18,11 @@ RUN	curl https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --out
 RUN	set -eu && \
 	mkdir -p /out && \
 	for bin in /usr/bin/warp-cli /usr/bin/warp-svc /usr/bin/socat; do \
-		cp -v --parents "$bin" /out/; \
-		ldd "$bin" | awk '/=>/ {print $3} /^[[:space:]]*\// {print $1}' | grep -E '^/' | xargs -r -I{} cp -v --parents "{}" /out/; \
+		real_bin="$(readlink -f "$bin")"; \
+		cp -v --parents "$bin" "$real_bin" /out/; \
+		ldd "$real_bin" | awk '/=>/ {print $3} /^[[:space:]]*\// {print $1}' | grep -E '^/' | xargs -r -I{} cp -v --parents "{}" /out/; \
 	done && \
+	cp -a --parents /usr/lib/cloudflare-warp /out/ && \
 	mkdir -p /out/etc/ssl/certs && \
 	cp -v /etc/ssl/certs/ca-certificates.crt /out/etc/ssl/certs/
 

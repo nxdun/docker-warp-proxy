@@ -1,6 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
+required_bins=(warp-cli warp-svc socat)
+for bin in "${required_bins[@]}"; do
+	if ! command -v "$bin" >/dev/null 2>&1; then
+		>&2 echo "Missing required binary: $bin"
+		exit 1
+	fi
+done
+
 warp-svc &
 warp_svc_pid=$!
 
