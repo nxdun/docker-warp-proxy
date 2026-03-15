@@ -6,7 +6,7 @@ ARG DEBIAN_RELEASE
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gnupg ca-certificates curl binutils && \
+    gnupg ca-certificates curl binutils socat && \
     curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg && \
     ARCH="$(dpkg --print-architecture)" && \
     echo "deb [arch=${ARCH} signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $DEBIAN_RELEASE main" | tee /etc/apt/sources.list.d/cloudflare-client.list && \
@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN set -eu && \
     mkdir -p /out && \
-    for bin in /bin/warp-cli /bin/warp-svc; do \
+    for bin in /bin/warp-cli /bin/warp-svc /usr/bin/socat; do \
         real_bin="$(readlink -f "$bin")"; \
         strip --strip-unneeded "$real_bin" || true; \
         cp -v --parents "$bin" "$real_bin" /out/; \

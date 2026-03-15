@@ -18,12 +18,8 @@ fi
 warp-cli --accept-tos connect
 
 # Fail fast
-socat TCP-LISTEN:40000,fork TCP:localhost:40001 &
+socat TCP-LISTEN:40000,fork TCP:127.0.0.1:40001 &
 socat_pid=$!
 wait -n "$warp_svc_pid" "$socat_pid"
 
-# alias
-alias warp-cli='warp-cli --accept-tos'
-alias wc='warp-cli --accept-tos'
 exit 1
-
