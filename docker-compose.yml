@@ -1,7 +1,7 @@
 services:
   cloudflare-warp-proxy:
-    image: nxdun/cloudflare-warp-proxy
-    # image: ghcr.io/seiry/cloudflare-warp-proxy
+    # image: nxdun/cloudflare-warp-proxy
+    image: warpp:latest
     network_mode: bridge
     ports:
       - 40000:40000

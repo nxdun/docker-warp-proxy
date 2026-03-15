@@ -1,13 +1,5 @@
-#!/bin/bash
-set -euo pipefail
-
-required_bins=(warp-cli warp-svc socat)
-for bin in "${required_bins[@]}"; do
-	if ! command -v "$bin" >/dev/null 2>&1; then
-		>&2 echo "Missing required binary: $bin"
-		exit 1
-	fi
-done
+#!/bin/sh
+set -eu
 
 warp-svc &
 warp_svc_pid=$!
@@ -25,10 +17,13 @@ fi
 
 warp-cli --accept-tos connect
 
-# Fail fast if either process exits unexpectedly.
+# Fail fast
 socat TCP-LISTEN:40000,fork TCP:localhost:40001 &
 socat_pid=$!
 wait -n "$warp_svc_pid" "$socat_pid"
-exit 1
 
+# alias
+alias warp-cli='warp-cli --accept-tos'
+alias wc='warp-cli --accept-tos'
+exit 1
 
