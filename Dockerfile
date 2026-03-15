@@ -1,5 +1,5 @@
 ARG DEBIAN_RELEASE=bullseye
-ARG LICENSE=''
+ARG LICENSE=
 FROM docker.io/debian:$DEBIAN_RELEASE-slim
 ARG DEBIAN_RELEASE
 COPY entrypoint.sh /

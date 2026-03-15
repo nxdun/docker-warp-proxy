@@ -1,13 +1,13 @@
 services:
   cloudflare-warp-proxy:
-    image: seiry/cloudflare-warp-proxy
+    image: nxdun/cloudflare-warp-proxy
     # image: ghcr.io/seiry/cloudflare-warp-proxy
     network_mode: bridge
     ports:
       - 40000:40000
     restart: unless-stopped
     environment:
-      - LICENSE='' # use your own key, for example zero trust or warp+
+      - LICENSE= # use your own key, for example zero trust or warp+
     logging:
       driver: json-file
       options:
