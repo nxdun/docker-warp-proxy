@@ -1,4 +1,4 @@
-name: docker-ci
+name: docker build CI
 
 permissions:
   contents: read
@@ -38,3 +38,9 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: |
             ${{ github.actor }}/cloudflare-warp-proxy:${{ contains(github.ref_name, 'beta') && 'beta' || 'latest' }}
+
+        env:
+          DOCKER_BUILD_RECORD_UPLOAD: "false"
+          DOCKER_BUILD_RECORD_RETENTION_DAYS: "0"
+          DOCKER_BUILD_CHECKS_ANNOTATIONS: "true"
+          DOCKER_BUILD_SUMMARY: "true"
