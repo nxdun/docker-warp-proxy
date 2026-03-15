@@ -15,7 +15,7 @@ RUN	curl https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --out
 	apt update && \
 	apt install cloudflare-warp -y --no-install-recommends
 
-RUN	set -euo pipefail && \
+RUN	set -eu && \
 	mkdir -p /out && \
 	for bin in /usr/bin/warp-cli /usr/bin/warp-svc /usr/bin/socat; do \
 		cp -v --parents "$bin" /out/; \
