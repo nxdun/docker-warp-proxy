@@ -1,14 +1,9 @@
 services:
   cloudflare-warp-proxy:
-    # image: nxdun/cloudflare-warp-proxy
-    image: warpp:latest
+    image: nxdun/cloudflare-warp-proxy
     network_mode: bridge
     ports:
       - 40000:40000
     restart: unless-stopped
     environment:
       - LICENSE= # use your own key, for example zero trust or warp+
-    logging:
-      driver: json-file
-      options:
-        max-size: 1m

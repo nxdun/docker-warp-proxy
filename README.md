@@ -1,8 +1,19 @@
-# docker-warp-proxy
-
+```JSON
+{
+  "docker"{
+    "image": "nxdun/cloudflare-warp-proxy:latest",
+    "size": "34 MB",
+    "description": "Docker image to run Cloudflare Warp in proxy mode.",
+    "features": [
+      "Multi step build to reduce image size. approx 120MB.",
+      "uses busybox as base image.",
+    ]
+  }
+}
+```
 Docker image to run Cloudflare Warp in proxy mode.
 
-- Multi step build to reduce image size. approx 120MB.
+- Multi step build to reduce image size. approx 33MB.
 - uses busybox as base image.
 - Recreate Trigger
 
@@ -17,7 +28,7 @@ SOCKS5 proxy server will be listening at port 40000.
 
 ### docker-compose
 
-```yml
+```yaml
 services:
   cloudflare-warp-proxy:
     image: nxdun/cloudflare-warp-proxy
@@ -26,11 +37,7 @@ services:
       - 40000:40000
     restart: unless-stopped
     environment:
-      - LICENSE=''
-    logging:
-      driver: json-file
-      options:
-        max-size: 1m
+      - LICENSE='cute-license-key' # use your own key, for example zero trust or warp+
 
 ```
 
@@ -53,7 +60,7 @@ curl https://www.cloudflare.com/cdn-cgi/trace/ -x http://127.1:40000  # http mod
 ...
 sni=plaintext
 warp=on
-# 👆wrap on！
+# 👆 warp is on !!!
 gateway=off
 ...
 ```
