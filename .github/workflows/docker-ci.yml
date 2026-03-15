@@ -29,18 +29,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.TOKEN }}
       -
-        name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v6.0.0
-        with:
-          images: |
-            ${{ github.actor }}/cloudflare-warp-proxy
-            ghcr.io/${{ github.repository_owner }}/cloudflare-warp-proxy
-          tags: |
-            type=semver,pattern={{version}}
-            type=raw,value=beta,enable=${{ contains(github.ref_name, 'beta') }}
-            type=raw,value=latest,enable=${{ !contains(github.ref_name, 'beta') }}
-      -
         name: Build and push
         id: docker_build
         uses: docker/build-push-action@v7.0.0
@@ -48,5 +36,6 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            ${{ github.actor }}/cloudflare-warp-proxy:${{ contains(github.ref_name, 'beta') && 'beta' || 'latest' }}
+            ghcr.io/${{ github.repository_owner }}/cloudflare-warp-proxy:${{ contains(github.ref_name, 'beta') && 'beta' || 'latest' }}
