@@ -44,15 +44,15 @@ services:
 ## test
 
 ```bash
-curl https://www.cloudflare.com/cdn-cgi/trace/ -x socks5h://127.1:40000  # remote dns mode
+curl https://www.cloudflare.com/cdn-cgi/trace -x socks5h://127.1:40000  # remote dns mode
 
 # or
 
-curl https://www.cloudflare.com/cdn-cgi/trace/ -x socks5://127.1:40000  # local dns mode
+curl https://www.cloudflare.com/cdn-cgi/trace -x socks5://127.1:40000  # local dns mode
 
 # or
 
-curl https://www.cloudflare.com/cdn-cgi/trace/ -x http://127.1:40000  # http mode
+curl https://www.cloudflare.com/cdn-cgi/trace -x http://127.1:40000  # http mode
 
 ```
 
