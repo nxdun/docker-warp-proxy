@@ -6,4 +6,4 @@ services:
       - 40000:40000
     restart: unless-stopped
     environment:
-      - LICENSE= # use your own key, for example zero trust or warp+
+      - LICENSE= # Use your own key, for example, Zero Trust or Warp+. Do not use WARP Device Keys (2026MAR19).
