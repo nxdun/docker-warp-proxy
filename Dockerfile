@@ -15,11 +15,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN set -eu && \
     mkdir -p /out && \
-    for bin in /bin/warp-cli /bin/warp-svc /usr/bin/socat; do \
-        real_bin="$(readlink -f "$bin")"; \
-        strip --strip-unneeded "$real_bin" || true; \
-        cp -v --parents "$bin" "$real_bin" /out/; \
-        ldd "$real_bin" 2>/dev/null | awk '/=>/ {print $3} /^[[:space:]]*\// {print $1}' | grep -E '^/' | xargs -r -I{} cp -vn --parents "{}" /out/ || true; \
+    for bin in /bin/warp-cli /bin/warp-svc /usr/bin/socat /usr/bin/curl; do \
+    real_bin="$(readlink -f "$bin")"; \
+    strip --strip-unneeded "$real_bin" || true; \
+    cp -v --parents "$bin" "$real_bin" /out/; \
+    ldd "$real_bin" 2>/dev/null | awk '/=>/ {print $3} /^[[:space:]]*\// {print $1}' | grep -E '^/' | xargs -r -I{} cp -vn --parents "{}" /out/ || true; \
     done && \
     find /out/lib /out/usr/lib -type f -name '*.so*' -exec strip --strip-unneeded {} + 2>/dev/null || true && \
     if [ -d /usr/lib/cloudflare-warp ]; then cp -a --parents /usr/lib/cloudflare-warp /out/; fi && \
@@ -38,4 +38,8 @@ COPY --from=builder /out/ /
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 40000/tcp
+
+HEALTHCHECK --interval=10s --timeout=5s --retries=3 \
+    CMD curl -sSf -x socks5h://localhost:40000 https://cloudflare.com/cdn-cgi/trace > /dev/null || exit 1
+
 ENTRYPOINT [ "/entrypoint.sh" ]
