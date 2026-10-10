@@ -2,7 +2,7 @@
 {
   "docker": {
     "image": "nxdun/cloudflare-warp-proxy:latest",
-    "size": "34 MB",
+    "size": "40 MB",
     "description": "Docker image to run Cloudflare Warp in proxy mode.",
     "features": [
       "Multi step build to reduce image size.",
@@ -13,7 +13,7 @@
 ```
 Docker image to run Cloudflare Warp in proxy mode.
 
-- Multi step build to reduce image size. approx 33MB.
+- Multi step build to reduce image size. approx 40MB.
 - uses busybox as base image.
 - Recreate Trigger
 
