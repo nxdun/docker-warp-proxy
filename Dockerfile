@@ -1,4 +1,4 @@
-ARG DEBIAN_RELEASE=bullseye
+ARG DEBIAN_RELEASE=bookworm
 ARG LICENSE=
 
 FROM docker.io/debian:$DEBIAN_RELEASE-slim AS builder
@@ -25,9 +25,13 @@ RUN set -eu && \
     if [ -d /usr/lib/cloudflare-warp ]; then cp -a --parents /usr/lib/cloudflare-warp /out/; fi && \
     mkdir -p /out/etc/ssl/certs && \
     cp -v /etc/ssl/certs/ca-certificates.crt /out/etc/ssl/certs/ && \
-    mkdir -p /out/lib/x86_64-linux-gnu && \
-    cp -vn /lib/x86_64-linux-gnu/libnss_dns.so.* /out/lib/x86_64-linux-gnu/ || true && \
-    cp -vn /lib/x86_64-linux-gnu/libresolv.so.* /out/lib/x86_64-linux-gnu/ || true
+    for arch_dir in /lib/*-linux-gnu; do \
+        if [ -d "$arch_dir" ]; then \
+            mkdir -p "/out${arch_dir}" && \
+            cp -vn "$arch_dir"/libnss_dns.so.* "/out${arch_dir}/" || true && \
+            cp -vn "$arch_dir"/libresolv.so.* "/out${arch_dir}/" || true; \
+        fi; \
+    done
 
 FROM docker.io/busybox:1.36.1-uclibc
 ARG LICENSE

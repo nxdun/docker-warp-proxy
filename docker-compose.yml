@@ -2,6 +2,8 @@ services:
   cloudflare-warp-proxy:
     image: nxdun/cloudflare-warp-proxy
     network_mode: bridge
+    cap_add:
+      - NET_ADMIN
     ports:
       - 40000:40000
     restart: unless-stopped
