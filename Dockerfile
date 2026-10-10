@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN set -eu && \
     mkdir -p /out/bin && \
-    for bin in /usr/bin/warp-cli /usr/bin/warp-svc /usr/bin/socat /usr/bin/curl; do \
+    for bin in /usr/bin/warp-cli /usr/bin/warp-svc /usr/bin/socat; do \
     strip --strip-unneeded "$bin" || true; \
     cp -v --parents "$bin" /out/; \
     ldd "$bin" 2>/dev/null | awk '/=>/ {print $3} /^[[:space:]]*\// {print $1}' | grep -E '^/' | xargs -r -I{} cp -vn --parents "{}" /out/ || true; \
@@ -45,6 +45,6 @@ RUN chmod +x /entrypoint.sh
 EXPOSE 40000/tcp
 
 HEALTHCHECK --interval=10s --timeout=5s --retries=3 \
-    CMD curl -sSf -x socks5h://localhost:40000 https://cloudflare.com/cdn-cgi/trace > /dev/null || exit 1
+    CMD warp-cli --accept-tos status | grep -q 'Connected' && nc -z -w 2 127.0.0.1 40000 || exit 1
 
 ENTRYPOINT [ "/entrypoint.sh" ]
