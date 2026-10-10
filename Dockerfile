@@ -45,6 +45,6 @@ RUN chmod +x /entrypoint.sh
 EXPOSE 40000/tcp
 
 HEALTHCHECK --interval=10s --timeout=5s --retries=3 \
-    CMD warp-cli --accept-tos status | grep -q 'Connected' && nc -z -w 2 127.0.0.1 40000 || exit 1
+    CMD warp-cli --accept-tos status | grep 'Connected' >/dev/null 2>&1 && nc -z -w 2 127.0.0.1 40000 || exit 1
 
 ENTRYPOINT [ "/entrypoint.sh" ]
