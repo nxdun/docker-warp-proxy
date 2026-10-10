@@ -14,13 +14,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-get install -y --no-install-recommends cloudflare-warp
 
 RUN set -eu && \
-    mkdir -p /out && \
-    for bin in /bin/warp-cli /bin/warp-svc /usr/bin/socat /usr/bin/curl; do \
-    real_bin="$(readlink -f "$bin")"; \
-    strip --strip-unneeded "$real_bin" || true; \
-    cp -v --parents "$bin" "$real_bin" /out/; \
-    ldd "$real_bin" 2>/dev/null | awk '/=>/ {print $3} /^[[:space:]]*\// {print $1}' | grep -E '^/' | xargs -r -I{} cp -vn --parents "{}" /out/ || true; \
+    mkdir -p /out/bin && \
+    for bin in /usr/bin/warp-cli /usr/bin/warp-svc /usr/bin/socat /usr/bin/curl; do \
+    strip --strip-unneeded "$bin" || true; \
+    cp -v --parents "$bin" /out/; \
+    ldd "$bin" 2>/dev/null | awk '/=>/ {print $3} /^[[:space:]]*\// {print $1}' | grep -E '^/' | xargs -r -I{} cp -vn --parents "{}" /out/ || true; \
     done && \
+    ln -sf /usr/bin/warp-cli /out/bin/warp-cli && \
+    ln -sf /usr/bin/warp-svc /out/bin/warp-svc && \
     find /out/lib /out/usr/lib -type f -name '*.so*' -exec strip --strip-unneeded {} + 2>/dev/null || true && \
     if [ -d /usr/lib/cloudflare-warp ]; then cp -a --parents /usr/lib/cloudflare-warp /out/; fi && \
     mkdir -p /out/etc/ssl/certs && \
