@@ -1,4 +1,4 @@
-ARG DEBIAN_RELEASE=bullseye
+ARG DEBIAN_RELEASE=bookworm
 ARG LICENSE=
 
 FROM docker.io/debian:$DEBIAN_RELEASE-slim AS builder
@@ -14,20 +14,25 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-get install -y --no-install-recommends cloudflare-warp
 
 RUN set -eu && \
-    mkdir -p /out && \
-    for bin in /bin/warp-cli /bin/warp-svc /usr/bin/socat /usr/bin/curl; do \
-    real_bin="$(readlink -f "$bin")"; \
-    strip --strip-unneeded "$real_bin" || true; \
-    cp -v --parents "$bin" "$real_bin" /out/; \
-    ldd "$real_bin" 2>/dev/null | awk '/=>/ {print $3} /^[[:space:]]*\// {print $1}' | grep -E '^/' | xargs -r -I{} cp -vn --parents "{}" /out/ || true; \
+    mkdir -p /out/bin && \
+    for bin in /usr/bin/warp-cli /usr/bin/warp-svc /usr/bin/socat; do \
+    strip --strip-unneeded "$bin" || true; \
+    cp -v --parents "$bin" /out/; \
+    ldd "$bin" 2>/dev/null | awk '/=>/ {print $3} /^[[:space:]]*\// {print $1}' | grep -E '^/' | xargs -r -I{} cp -vn --parents "{}" /out/ || true; \
     done && \
+    ln -sf /usr/bin/warp-cli /out/bin/warp-cli && \
+    ln -sf /usr/bin/warp-svc /out/bin/warp-svc && \
     find /out/lib /out/usr/lib -type f -name '*.so*' -exec strip --strip-unneeded {} + 2>/dev/null || true && \
     if [ -d /usr/lib/cloudflare-warp ]; then cp -a --parents /usr/lib/cloudflare-warp /out/; fi && \
     mkdir -p /out/etc/ssl/certs && \
     cp -v /etc/ssl/certs/ca-certificates.crt /out/etc/ssl/certs/ && \
-    mkdir -p /out/lib/x86_64-linux-gnu && \
-    cp -vn /lib/x86_64-linux-gnu/libnss_dns.so.* /out/lib/x86_64-linux-gnu/ || true && \
-    cp -vn /lib/x86_64-linux-gnu/libresolv.so.* /out/lib/x86_64-linux-gnu/ || true
+    for arch_dir in /lib/*-linux-gnu; do \
+        if [ -d "$arch_dir" ]; then \
+            mkdir -p "/out${arch_dir}" && \
+            cp -vn "$arch_dir"/libnss_dns.so.* "/out${arch_dir}/" || true && \
+            cp -vn "$arch_dir"/libresolv.so.* "/out${arch_dir}/" || true; \
+        fi; \
+    done
 
 FROM docker.io/busybox:1.36.1-uclibc
 ARG LICENSE
@@ -40,6 +45,6 @@ RUN chmod +x /entrypoint.sh
 EXPOSE 40000/tcp
 
 HEALTHCHECK --interval=10s --timeout=5s --retries=3 \
-    CMD curl -sSf -x socks5h://localhost:40000 https://cloudflare.com/cdn-cgi/trace > /dev/null || exit 1
+    CMD warp-cli --accept-tos status | grep 'Connected' >/dev/null 2>&1 && nc -z -w 2 127.0.0.1 40000 || exit 1
 
 ENTRYPOINT [ "/entrypoint.sh" ]

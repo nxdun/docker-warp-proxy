@@ -1,28 +1,31 @@
-```JSON
+```json
 {
-  "docker"{
+  "docker": {
     "image": "nxdun/cloudflare-warp-proxy:latest",
-    "size": "34 MB",
+    "size": "40 MB",
     "description": "Docker image to run Cloudflare Warp in proxy mode.",
     "features": [
-      "Multi step build to reduce image size. approx 120MB.",
-      "uses busybox as base image.",
+      "Multi step build to reduce image size.",
+      "uses busybox as base image."
     ]
   }
 }
 ```
 Docker image to run Cloudflare Warp in proxy mode.
 
-- Multi step build to reduce image size. approx 33MB.
+- Multi step build to reduce image size. approx 40MB.
 - uses busybox as base image.
 - Recreate Trigger
 
 ## Usage
 
 ### docker hub image
+```bash
+docker run -d --cap-add=NET_ADMIN -p 40000:40000 --restart unless-stopped nxdun/cloudflare-warp-proxy
 ```
-docker run -d -p 40000:40000 --restart unless-stopped nxdun/cloudflare-warp-proxy
-```
+
+> [!NOTE]
+> `--cap-add=NET_ADMIN` is required for Cloudflare WARP to manage its network routing policies inside the container.
 
 SOCKS5 proxy server will be listening at port 40000.
 
@@ -33,12 +36,13 @@ services:
   cloudflare-warp-proxy:
     image: nxdun/cloudflare-warp-proxy
     network_mode: bridge
+    cap_add:
+      - NET_ADMIN
     ports:
       - 40000:40000
     restart: unless-stopped
     environment:
       - LICENSE='cute-license-key' # use your own key, for example zero trust or warp+
-
 ```
 
 ## test
